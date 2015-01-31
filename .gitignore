@@ -1,2 +1,10 @@
 /server/build/*
 /server/credentials.yml
+
+/app/bin/
+/app/gen/
+/app/target/
+/app/.idea*/
+/app/build.xml
+/app/local.properties
+/app/proguard-*.txt
