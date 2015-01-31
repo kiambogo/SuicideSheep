@@ -1,9 +1,9 @@
-package scaloid.example
+package kiambogo.suicidesheep
 
 import org.scaloid.common._
 import android.graphics.Color
 
-class HelloScaloid extends SActivity {
+class SuicideSheep extends SActivity {
 
   onCreate {
     contentView = new SVerticalLayout {
@@ -12,8 +12,8 @@ class HelloScaloid extends SActivity {
         case t: STextView => t textSize 10.dip
         case e: SEditText => e.backgroundColor(Color.YELLOW)
       }
-      STextView("I am 10 dip tall")
       STextView("Me too")
+      SImageView(R.drawable.ic_launcher_web)
       STextView("I am 15 dip tall") textSize 15.dip // overriding
       this += new SLinearLayout {
         STextView("Button: ")

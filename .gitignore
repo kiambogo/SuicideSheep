@@ -8,3 +8,5 @@
 /app/build.xml
 /app/local.properties
 /app/proguard-*.txt
+/app/project/project/
+/app/project/target/
