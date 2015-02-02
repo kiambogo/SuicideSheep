@@ -1,32 +1,49 @@
 package kiambogo.suicidesheep;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import kiambogo.suicidesheep.models.Song;
+import kiambogo.suicidesheep.services.NetworkService;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+
+    public List<Song> songs = new ArrayList();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-        List<Song> songs = new ArrayList<>();
-        songs.add(new Song(1, "test", "arttttist", 100, 200, new Date()));
+        //Download DB
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            new DownloadDatabase().execute(getApplicationContext());
+        } else {
+            System.out.println("No internet connection!");
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -34,9 +51,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         SongFragment songFragment = new SongFragment();
         fragmentTransaction.add(R.id.fragmentContainer, songFragment);
         fragmentTransaction.commit();
-
-
-//        setListAdapter(new SongListAdapter(songs, getApplicationContext()));
     }
 
     @Override
@@ -74,5 +88,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
+    }
+
+    private class DownloadDatabase extends AsyncTask<Object, Void, String> {
+
+        NetworkService networkService = new NetworkService(getApplicationContext());
+
+        @Override
+        protected String doInBackground(Object... params) {
+            try {
+                networkService.downloadDatabase();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }

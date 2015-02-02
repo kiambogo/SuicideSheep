@@ -10,16 +10,20 @@ public class Song {
     String name;
     String artist;
     Integer duration;
-    Integer viewCount;
     Date uploadDate;
+    Integer viewCount;
+    Boolean isMix;
+    Boolean isSheeep;
 
-    public Song(Integer id, String name, String artist, Integer duration, Integer viewCount, Date uploadDate) {
+    public Song(Integer id, String name, String artist, Integer duration, Date uploadDate, Integer viewCount, Boolean isMix, Boolean isSheeep) {
         this.id = id;
         this.name = name;
         this.artist = artist;
         this.duration = duration;
-        this.viewCount = viewCount;
         this.uploadDate = uploadDate;
+        this.viewCount = viewCount;
+        this.isMix = isMix;
+        this.isSheeep = isSheeep;
     }
 
     public Integer getID() {
@@ -45,4 +49,8 @@ public class Song {
     public Date getUploadDate() {
         return this.uploadDate;
     }
+
+    public Boolean getIsMix() { return this.isMix; }
+
+    public Boolean getIsSheeep() { return this.isSheeep; }
 }

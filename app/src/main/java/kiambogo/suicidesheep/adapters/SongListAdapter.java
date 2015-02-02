@@ -42,7 +42,6 @@ public class SongListAdapter extends ArrayAdapter<Song> {
         ImageView picture = (ImageView) convertView.findViewById(R.id.downloaded);
         ImageView downloaded = (ImageView) convertView.findViewById(R.id.downloaded);
 
-        System.out.println(song.getDuration() + ":dur");
         name.setText(song.getName());
         artist.setText(song.getArtist());
         duration.setText(song.getDuration().toString());

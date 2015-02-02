@@ -1,5 +1,9 @@
 package kiambogo.suicidesheep;
 
+import android.app.Activity;
+import android.content.Context;
+import android.database.SQLException;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.view.LayoutInflater;
@@ -13,6 +17,7 @@ import java.util.List;
 
 import kiambogo.suicidesheep.adapters.SongListAdapter;
 import kiambogo.suicidesheep.models.Song;
+import kiambogo.suicidesheep.services.DatabaseService;
 
 /**
  * A fragment representing a list of Items.
@@ -23,7 +28,8 @@ import kiambogo.suicidesheep.models.Song;
  */
 public class SongFragment extends ListFragment {
     private OnFragmentInteractionListener mListener;
-    List<Song> songs = new ArrayList();
+    List<Song> songs = getSongs();
+    Context context;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -31,6 +37,12 @@ public class SongFragment extends ListFragment {
      */
     public SongFragment() {
 
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
     }
 
     @Override
@@ -43,12 +55,6 @@ public class SongFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        songs.add(new Song(1, "test", "arttttist", 100, 200, new Date()));
-        songs.add(new Song(2, "test2", "arttttist", 100, 200, new Date()));
-        songs.add(new Song(3, "test3", "arttttist", 100, 200, new Date()));
-        songs.add(new Song(4, "test4", "arttttist", 100, 200, new Date()));
-
 
         setListAdapter(new SongListAdapter(songs, getActivity().getApplicationContext()));
     }
@@ -84,6 +90,11 @@ public class SongFragment extends ListFragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public List<Song> getSongs() {
+        DatabaseService databaseService = new DatabaseService(context);
+        return databaseService.getAllSongsFromSongs();
     }
 
 }
