@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="fill_parent"
+android:layout_height="?android:attr/listPreferredItemHeight"
+android:padding="2dp">
+
+<ImageView
+    android:id="@+id/thumbnail"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:layout_alignParentTop="true"
+    android:layout_marginRight="6dip"
+    android:contentDescription="TODO"
+    android:src="@drawable/ic_launcher" />
+
+<TextView
+    android:id="@+id/name"
+    android:layout_width="fill_parent"
+    android:layout_height="25dp"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    android:layout_alignWithParentIfMissing="true"
+    android:layout_toRightOf="@id/thumbnail"
+    android:gravity="bottom"
+    android:text="Example application"
+    android:textSize="20sp"
+    android:textColor="#000000"
+    android:ellipsize="end"
+    android:singleLine="true"/>
+
+<TextView
+    android:id="@+id/artist"
+    android:layout_width="fill_parent"
+    android:layout_height="20dip"
+    android:layout_toRightOf="@id/thumbnail"
+    android:layout_below="@id/name"
+    android:ellipsize="marquee"
+    android:singleLine="true"
+    android:text="Description"
+    android:textSize="16sp"
+    android:textColor="#555555"/>
+
+<TextView
+    android:id="@+id/duration"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@id/thumbnail"
+    android:layout_below="@id/artist"
+    android:ellipsize="marquee"
+    android:singleLine="true"
+    android:text="Description"
+    android:textSize="16sp"
+    android:textColor="#555555"/>
+
+<ImageView
+    android:id="@+id/downloaded"
+    android:layout_width="20dp"
+    android:layout_height="20dp"
+    android:layout_marginRight="6dip"
+    android:contentDescription="TODO"
+    android:layout_below="@id/duration"
+    android:layout_toRightOf="@id/thumbnail"
+    android:scaleType="centerInside"
+    android:src="@drawable/download_icon" />
+
+</RelativeLayout>
