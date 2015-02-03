@@ -7,7 +7,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,7 +33,7 @@ import kiambogo.suicidesheep.services.DatabaseService;
  */
 public class SongsFragment extends ListFragment {
     private OnItemSelectedListener listener;
-    List<Song> songs = getPage(0);
+    ArrayList<Song> songs = getPage(0);
     Context context;
 
     /**
@@ -63,9 +65,14 @@ public class SongsFragment extends ListFragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        registerForContextMenu(getListView());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setListAdapter(new SongListAdapter(songs, getActivity().getApplicationContext()));
     }
 
@@ -73,6 +80,19 @@ public class SongsFragment extends ListFragment {
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+
+//        menu.clearHeader();
+        menu.setHeaderTitle(songs.get(info.position).getName());
+        String[] menuItems = new String[] {"Download"};
+        for (int i = 0; i<menuItems.length; i++) {
+            menu.add(Menu.NONE, i, i, menuItems[i]);
+        }
     }
 
 
@@ -105,12 +125,12 @@ public class SongsFragment extends ListFragment {
         public void onItemSelectedListener(Integer songID);
     }
 
-    public List<Song> getPage(Integer page) {
+    public ArrayList<Song> getPage(Integer page) {
         DatabaseService databaseService = new DatabaseService(context);
         return databaseService.getSongsWithPage(page);
     }
 
-    public List<Song> getSongs() {
+    public ArrayList<Song> getSongs() {
         DatabaseService databaseService = new DatabaseService(context);
         return databaseService.getAllSongs();
     }

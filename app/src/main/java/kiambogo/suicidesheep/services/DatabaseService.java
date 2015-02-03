@@ -39,8 +39,8 @@ public class DatabaseService extends SQLiteOpenHelper {
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
     }
 
-    public List<Song> getAllSongs() throws SQLException{
-        List<Song> songList = new ArrayList<Song>();
+    public ArrayList<Song> getAllSongs() throws SQLException{
+        ArrayList<Song> songList = new ArrayList<Song>();
         // Select All Query
         String selectQuery = "SELECT  * FROM songs WHERE isMix = 0";
 
@@ -72,8 +72,8 @@ public class DatabaseService extends SQLiteOpenHelper {
         return songList;
     }
 
-    public List<Song> getSongsWithPage(Integer page) throws SQLException {
-        List<Song> songList = new ArrayList<Song>();
+    public ArrayList<Song> getSongsWithPage(Integer page) throws SQLException {
+        ArrayList<Song> songList = new ArrayList<Song>();
         // Select All Query
         String selectQuery = "SELECT  * FROM songs WHERE isMix = 0 ORDER BY uploadDate DESC LIMIT 20 OFFSET " + page*50;
 

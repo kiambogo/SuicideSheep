@@ -47,8 +47,6 @@ public class SplashActivity extends Activity {
             SPLASH_TIME_OUT = 3000;
         }
 
-
-
         new Handler().postDelayed(new Runnable() {
 
             /*
