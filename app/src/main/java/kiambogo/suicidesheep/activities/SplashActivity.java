@@ -23,8 +23,9 @@ import kiambogo.suicidesheep.services.NetworkService;
 public class SplashActivity extends Activity {
 
     // Splash screen timer
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int SPLASH_TIME_OUT = 10000;
     private ProgressBar spinner;
+    DownloadDatabase downloadDatabase;
 
 
     @Override
@@ -39,7 +40,8 @@ public class SplashActivity extends Activity {
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadDatabase().execute(getApplicationContext());
+             downloadDatabase = new DownloadDatabase();
+                    downloadDatabase.execute(getApplicationContext());
         } else {
             System.out.println("No internet connection!");
         }
@@ -56,9 +58,9 @@ public class SplashActivity extends Activity {
                 // This method will be executed once the timer is over
                 // Start your app main activity
                 Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                while (downloadDatabase.getStatus() != AsyncTask.Status.FINISHED) { }
                 startActivity(i);
 
-                // close this activity
                 finish();
             }
         }, SPLASH_TIME_OUT);

@@ -28,7 +28,6 @@ public class DatabaseService extends SQLiteOpenHelper {
     private SQLiteDatabase myDataBase;
     private final Context myContext;
 
-
     public DatabaseService(Context context) {
 
         super(context, DB_NAME, null, 1);
@@ -40,10 +39,10 @@ public class DatabaseService extends SQLiteOpenHelper {
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
     }
 
-    public List<Song> getAllSongsFromSongs() throws SQLException{
+    public List<Song> getAllSongs() throws SQLException{
         List<Song> songList = new ArrayList<Song>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM songs";
+        String selectQuery = "SELECT  * FROM songs WHERE isMix = 0";
 
         openDataBase();
         Cursor cursor = myDataBase.rawQuery(selectQuery, null);
@@ -76,7 +75,7 @@ public class DatabaseService extends SQLiteOpenHelper {
     public List<Song> getSongsWithPage(Integer page) throws SQLException {
         List<Song> songList = new ArrayList<Song>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM songs ORDER BY uploadDate DESC LIMIT 20 OFFSET " + page*50;
+        String selectQuery = "SELECT  * FROM songs WHERE isMix = 0 ORDER BY uploadDate DESC LIMIT 20 OFFSET " + page*50;
 
         openDataBase();
         Cursor cursor = myDataBase.rawQuery(selectQuery, null);
@@ -118,6 +117,23 @@ public class DatabaseService extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 url = new URL(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        myDataBase.close();
+        return url;
+    }
+
+    public Uri getURL(Integer songID) throws MalformedURLException {
+        Uri url = null;
+
+        openDataBase();
+        String selectQuery = "SELECT s3_url FROM songs where _id = "+songID;
+
+        Cursor cursor = myDataBase.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                url = Uri.parse(cursor.getString(0));
             } while (cursor.moveToNext());
         }
         myDataBase.close();

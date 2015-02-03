@@ -1,10 +1,6 @@
 package kiambogo.suicidesheep.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Debug;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +8,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.Console;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 import kiambogo.suicidesheep.R;
-import kiambogo.suicidesheep.ThumbnailManager;
+import kiambogo.suicidesheep.services.ThumbnailService;
 import kiambogo.suicidesheep.models.Song;
 import kiambogo.suicidesheep.services.DatabaseService;
 
@@ -42,7 +34,7 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Song song = songList.get(position);
-        ThumbnailManager thumbnailManager = new ThumbnailManager();
+        ThumbnailService thumbnailService = new ThumbnailService();
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.song_list_item, parent, false);
@@ -59,7 +51,7 @@ public class SongListAdapter extends ArrayAdapter<Song> {
         duration.setText(parseDuration(song.getDuration()));
 
         try {
-            thumbnailManager.fetchDrawableOnThread(getThumbURL(song), picture);
+            thumbnailService.fetchDrawableOnThread(getThumbURL(song), picture);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

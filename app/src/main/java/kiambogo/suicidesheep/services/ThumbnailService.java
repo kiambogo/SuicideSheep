@@ -1,4 +1,4 @@
-package kiambogo.suicidesheep;
+package kiambogo.suicidesheep.services;
 
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -18,10 +18,10 @@ import java.util.Map;
 /**
  * Created by cpoenaru on 2/2/15.
  */
-public class ThumbnailManager {
+public class ThumbnailService {
     private final Map<String, Drawable> drawableMap;
 
-    public ThumbnailManager() {
+    public ThumbnailService() {
         drawableMap = new HashMap<String, Drawable>();
     }
 

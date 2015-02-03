@@ -3,28 +3,34 @@ package kiambogo.suicidesheep.activities;
 import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import kiambogo.suicidesheep.R;
-import kiambogo.suicidesheep.SongFragment;
+import kiambogo.suicidesheep.fragments.SongsFragment;
 import kiambogo.suicidesheep.models.Song;
-import kiambogo.suicidesheep.services.NetworkService;
+import kiambogo.suicidesheep.services.MediaService;
+import android.widget.MediaController.MediaPlayerControl;
 
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, SongsFragment.OnItemSelectedListener {
 
-    public List<Song> songs = new ArrayList();
+    public ArrayList<Song> songs = new ArrayList();
+    private MediaService musicSrv;
+    private Intent playIntent;
+    private boolean musicBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +46,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        SongFragment songFragment = new SongFragment();
-        fragmentTransaction.add(R.id.fragmentContainer, songFragment);
+        SongsFragment songsFragment = new SongsFragment();
+        fragmentTransaction.add(R.id.fragmentContainer, songsFragment);
         fragmentTransaction.commit();
+
+        if (playIntent == null) {
+            playIntent = new Intent(this, MediaService.class);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
+        }
     }
 
     @Override
@@ -67,6 +79,29 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         return super.onOptionsItemSelected(item);
     }
 
+    private ServiceConnection musicConnection = new ServiceConnection(){
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MediaService.MusicBinder binder = (MediaService.MusicBinder)service;
+            //get service
+            musicSrv = binder.getService();
+            //pass list
+            musicSrv.setList(songs);
+            musicBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
+
+    public void songPicked(View view) {
+
+    }
+
+
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 
@@ -82,4 +117,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
+    @Override
+    public void onItemSelectedListener(Integer id) {
+        Log.d("Activity", "Playing song");
+        musicSrv.setSong(id);
+        musicSrv.playSong();
+    }
 }
