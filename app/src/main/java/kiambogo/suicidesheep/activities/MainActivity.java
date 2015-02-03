@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -19,24 +20,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kiambogo.suicidesheep.R;
+import kiambogo.suicidesheep.controller.MusicController;
 import kiambogo.suicidesheep.fragments.SongsFragment;
 import kiambogo.suicidesheep.models.Song;
 import kiambogo.suicidesheep.services.MediaService;
+
+import android.widget.Button;
 import android.widget.MediaController.MediaPlayerControl;
 
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, SongsFragment.OnItemSelectedListener {
+public class MainActivity extends ActionBarActivity
+        implements ActionBar.TabListener,
+        SongsFragment.OnItemSelectedListener,
+        MediaPlayerControl,
+        View.OnClickListener {
 
     public ArrayList<Song> songs = new ArrayList();
     private MediaService musicSrv;
     private Intent playIntent;
-    private boolean musicBound = false;
+    private MusicController controller;
+    Boolean musicBound = false;
+    Button playBtn;
+    Button pauseBtn;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setController();
         setContentView(R.layout.activity_main);
+
+        playBtn = (Button) findViewById(R.id.playButton);
+        pauseBtn = (Button) findViewById(R.id.pauseButton);
+
+        playBtn.setOnClickListener(this);
+        pauseBtn.setOnClickListener(this);
+
     }
 
     @Override
@@ -97,11 +118,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     };
 
-    public void songPicked(View view) {
-
-    }
-
-
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 
@@ -122,5 +138,105 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         Log.d("Activity", "Playing song");
         musicSrv.setSong(id);
         musicSrv.playSong();
+    }
+
+    @Override
+    public void start() {
+        musicSrv.go();
+    }
+
+    @Override
+    public void pause() {
+        musicSrv.pausePlayer();
+    }
+
+    @Override
+    public int getDuration() {
+        if(musicSrv!=null && musicBound && musicSrv.isPng())
+            return musicSrv.getDur();
+        else return 0;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        if(musicSrv!=null && musicBound && musicSrv.isPng())
+        return musicSrv.getPosn();
+        else return 0;
+    }
+
+    @Override
+    public void seekTo(int pos) {
+        musicSrv.seek(pos);
+    }
+
+    @Override
+    public boolean isPlaying() {
+        if(musicSrv!=null && musicBound)
+            return musicSrv.isPng();
+        return false;
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return true;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return true;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return true;
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
+    }
+
+    private void setController(){
+        controller = new MusicController(this);
+
+        controller.setPrevNextListeners(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playNext();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPrev();
+            }
+        });
+
+        controller.setMediaPlayer(this);
+        controller.setAnchorView(findViewById(R.id.fragmentContainer));
+        controller.setEnabled(true);
+    }
+
+    //play next
+    private void playNext(){
+        musicSrv.playNext();
+        controller.show(0);
+    }
+
+    //play previous
+    private void playPrev(){
+        musicSrv.playPrev();
+        controller.show(0);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.pauseButton)
+            pause();
+        else start();
     }
 }
