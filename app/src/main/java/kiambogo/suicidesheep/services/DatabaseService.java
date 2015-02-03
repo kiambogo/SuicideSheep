@@ -140,6 +140,21 @@ public class DatabaseService extends SQLiteOpenHelper {
         return url;
     }
 
+    public boolean isSongInFavourites(Integer songID) {
+        openDataBase();
+        String selectQuery = "SELECT * FROM favourites where _id = "+songID;
+
+        Cursor cursor = myDataBase.rawQuery(selectQuery, null);
+        if (cursor.getCount() == 1) {
+            myDataBase.close();
+            return true;
+        }
+        else {
+            myDataBase.close();
+            return false;
+        }
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
 

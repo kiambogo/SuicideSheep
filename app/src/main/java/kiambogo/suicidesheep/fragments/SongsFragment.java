@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +24,7 @@ import kiambogo.suicidesheep.R;
 import kiambogo.suicidesheep.adapters.SongListAdapter;
 import kiambogo.suicidesheep.models.Song;
 import kiambogo.suicidesheep.services.DatabaseService;
+import kiambogo.suicidesheep.services.FileService;
 
 /**
  * A fragment representing a list of Items.
@@ -86,13 +88,40 @@ public class SongsFragment extends ListFragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        FileService fileService = new FileService(context);
+        DatabaseService databaseService = new DatabaseService(context);
 
 //        menu.clearHeader();
-        menu.setHeaderTitle(songs.get(info.position).getName());
-        String[] menuItems = new String[] {"Download"};
+        Song selectedSong = songs.get(info.position);
+        menu.setHeaderTitle(selectedSong.getName());
+        ArrayList<String> arrayMenuItems = new ArrayList<>();
+
+        if (fileService.isSongDownloaded(selectedSong.getID()))
+            arrayMenuItems.add("Delete Download");
+        else
+            arrayMenuItems.add("Download");
+
+        if (!databaseService.isSongInFavourites(selectedSong.getID()))
+            arrayMenuItems.add("Add to Favourites");
+
+
+        String[] menuItems = arrayMenuItems.toArray(new String[arrayMenuItems.size()]);
+
         for (int i = 0; i<menuItems.length; i++) {
             menu.add(Menu.NONE, i, i, menuItems[i]);
         }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        if (item.getTitle() == "Download") {
+
+        }
+
+
+        return super.onContextItemSelected(item);
     }
 
 

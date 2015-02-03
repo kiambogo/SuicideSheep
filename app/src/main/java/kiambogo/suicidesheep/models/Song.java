@@ -53,4 +53,5 @@ public class Song {
     public Boolean getIsMix() { return this.isMix; }
 
     public Boolean getIsSheeep() { return this.isSheeep; }
+
 }
