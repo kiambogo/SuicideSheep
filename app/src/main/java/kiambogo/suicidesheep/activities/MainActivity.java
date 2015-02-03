@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -27,13 +28,16 @@ import kiambogo.suicidesheep.services.MediaService;
 
 import android.widget.Button;
 import android.widget.MediaController.MediaPlayerControl;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 
 
 public class MainActivity extends ActionBarActivity
         implements ActionBar.TabListener,
         SongsFragment.OnItemSelectedListener,
         MediaPlayerControl,
-        View.OnClickListener {
+        View.OnClickListener,
+        SeekBar.OnSeekBarChangeListener {
 
     public ArrayList<Song> songs = new ArrayList();
     private MediaService musicSrv;
@@ -42,7 +46,8 @@ public class MainActivity extends ActionBarActivity
     Boolean musicBound = false;
     Button playBtn;
     Button pauseBtn;
-
+    SeekBar seekBar;
+    Handler seekHandler = new Handler();
 
 
     @Override
@@ -54,9 +59,11 @@ public class MainActivity extends ActionBarActivity
 
         playBtn = (Button) findViewById(R.id.playButton);
         pauseBtn = (Button) findViewById(R.id.pauseButton);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
 
         playBtn.setOnClickListener(this);
         pauseBtn.setOnClickListener(this);
+        seekBar.setOnSeekBarChangeListener(this);
 
     }
 
@@ -76,6 +83,9 @@ public class MainActivity extends ActionBarActivity
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
         }
+
+        seekUpdation();
+
     }
 
     @Override
@@ -147,6 +157,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void pause() {
+        seekBar.setProgress(getCurrentPosition());
         musicSrv.pausePlayer();
     }
 
@@ -208,29 +219,25 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View v) {
                 playNext();
+                seekBar.setMax(getDuration());
             }
         }, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playPrev();
+                seekBar.setMax(getDuration());
             }
         });
-
-        controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.fragmentContainer));
-        controller.setEnabled(true);
     }
 
     //play next
     private void playNext(){
         musicSrv.playNext();
-        controller.show(0);
     }
 
     //play previous
     private void playPrev(){
         musicSrv.playPrev();
-        controller.show(0);
     }
 
     @Override
@@ -239,4 +246,34 @@ public class MainActivity extends ActionBarActivity
             pause();
         else start();
     }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser) {
+            seekTo(progress);
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    Runnable run = new Runnable() {
+        @Override public void run() {
+            seekUpdation();
+        }
+    };
+
+    public void seekUpdation() {
+        seekBar.setProgress(getCurrentPosition());
+        seekBar.setMax(getDuration());
+        seekHandler.postDelayed(run, 1000);
+    }
+
 }

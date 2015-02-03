@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import java.io.IOException;
 
 import kiambogo.suicidesheep.R;
+import kiambogo.suicidesheep.models.Song;
 import kiambogo.suicidesheep.services.NetworkService;
 
 /**
@@ -23,7 +24,7 @@ import kiambogo.suicidesheep.services.NetworkService;
 public class SplashActivity extends Activity {
 
     // Splash screen timer
-    private static int SPLASH_TIME_OUT = 10000;
+    private static int SPLASH_TIME_OUT;
     private ProgressBar spinner;
     DownloadDatabase downloadDatabase;
 
@@ -35,16 +36,18 @@ public class SplashActivity extends Activity {
 
         spinner = (ProgressBar)findViewById(R.id.progressBar1);
 
-        //Download DB
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-             downloadDatabase = new DownloadDatabase();
-                    downloadDatabase.execute(getApplicationContext());
+            downloadDatabase = new DownloadDatabase();
+            downloadDatabase.execute(getApplicationContext());
+            SPLASH_TIME_OUT = 10000;
         } else {
-            System.out.println("No internet connection!");
+            SPLASH_TIME_OUT = 3000;
         }
+
+
 
         new Handler().postDelayed(new Runnable() {
 
@@ -58,9 +61,7 @@ public class SplashActivity extends Activity {
                 // This method will be executed once the timer is over
                 // Start your app main activity
                 Intent i = new Intent(SplashActivity.this, MainActivity.class);
-                while (downloadDatabase.getStatus() != AsyncTask.Status.FINISHED) { }
                 startActivity(i);
-
                 finish();
             }
         }, SPLASH_TIME_OUT);
@@ -79,6 +80,17 @@ public class SplashActivity extends Activity {
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Intent i = new Intent(SplashActivity.this, MainActivity.class);
+
+            startActivity(i);
+
+        }
+
+
     }
 
 }
