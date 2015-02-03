@@ -1,4 +1,4 @@
-package kiambogo.suicidesheep;
+package kiambogo.suicidesheep.activities;
 
 import android.app.ActionBar;
 import android.app.FragmentManager;
@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import kiambogo.suicidesheep.R;
+import kiambogo.suicidesheep.SongFragment;
 import kiambogo.suicidesheep.models.Song;
 import kiambogo.suicidesheep.services.NetworkService;
 
@@ -29,16 +31,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
-        //Download DB
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadDatabase().execute(getApplicationContext());
-        } else {
-            System.out.println("No internet connection!");
-        }
     }
 
     @Override
@@ -90,18 +82,4 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-    private class DownloadDatabase extends AsyncTask<Object, Void, String> {
-
-        NetworkService networkService = new NetworkService(getApplicationContext());
-
-        @Override
-        protected String doInBackground(Object... params) {
-            try {
-                networkService.downloadDatabase();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
 }

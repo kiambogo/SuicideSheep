@@ -2,8 +2,8 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="fill_parent"
-android:layout_height="?android:attr/listPreferredItemHeight"
-android:padding="2dp">
+android:layout_height="100dp"
+android:padding="4dp">
 
 <ImageView
     android:id="@+id/thumbnail"
@@ -12,7 +12,9 @@ android:padding="2dp">
     android:layout_alignParentTop="true"
     android:layout_marginRight="6dip"
     android:contentDescription="TODO"
-    android:src="@drawable/ic_launcher" />
+    android:src="@drawable/ic_launcher"
+    android:minHeight="90dp"
+    android:minWidth="120dp" />
 
 <TextView
     android:id="@+id/name"

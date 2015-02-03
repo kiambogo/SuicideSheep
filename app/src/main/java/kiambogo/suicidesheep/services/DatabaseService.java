@@ -6,6 +6,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import android.net.Uri;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +71,57 @@ public class DatabaseService extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         return songList;
+    }
+
+    public List<Song> getSongsWithPage(Integer page) throws SQLException {
+        List<Song> songList = new ArrayList<Song>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM songs ORDER BY uploadDate DESC LIMIT 20 OFFSET " + page*50;
+
+        openDataBase();
+        Cursor cursor = myDataBase.rawQuery(selectQuery, null);
+
+        SimpleDateFormat parserSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Song song = null;
+                try {
+                    song = new Song(
+                            cursor.getInt(0),
+                            cursor.getString(1),
+                            cursor.getString(2),
+                            cursor.getInt(3),
+                            parserSDF.parse(cursor.getString(4)),
+                            cursor.getInt(5),
+                            (cursor.getString(6) == "true") ? true:false,
+                            (cursor.getString(6) == "false") ? true:false);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                songList.add(song);
+            } while (cursor.moveToNext());
+        }
+        myDataBase.close();
+        return songList;
+    }
+
+    public URL getThumbnailLink(Integer songID) throws MalformedURLException {
+        URL url = new URL("https://yt3.ggpht.com/-nkC01SMBUms/AAAAAAAAAAI/AAAAAAAAAAA/X4GElTDAELg/s900-c-k-no/photo.jpg");
+
+        openDataBase();
+        String selectQuery = "SELECT thumbnail_url FROM images where _id = "+songID;
+
+        Cursor cursor = myDataBase.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                url = new URL(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        myDataBase.close();
+        return url;
     }
 
     @Override

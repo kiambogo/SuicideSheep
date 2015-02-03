@@ -28,7 +28,7 @@ import kiambogo.suicidesheep.services.DatabaseService;
  */
 public class SongFragment extends ListFragment {
     private OnFragmentInteractionListener mListener;
-    List<Song> songs = getSongs();
+    List<Song> songs = getPage(0);
     Context context;
 
     /**
@@ -90,6 +90,11 @@ public class SongFragment extends ListFragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public List<Song> getPage(Integer page) {
+        DatabaseService databaseService = new DatabaseService(context);
+        return databaseService.getSongsWithPage(page);
     }
 
     public List<Song> getSongs() {

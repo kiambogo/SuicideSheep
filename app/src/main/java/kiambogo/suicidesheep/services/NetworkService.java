@@ -41,7 +41,7 @@ public class NetworkService {
             OutputStream outputStream = new FileOutputStream(db);
 
             int read;
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[10024];
 
             while ((read = inputStream.read(bytes)) != -1) {
                 outputStream.write(bytes, 0, read);
